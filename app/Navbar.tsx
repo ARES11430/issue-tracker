@@ -22,8 +22,8 @@ const Navbar = () => {
 				{links.map((link) => (
 					<Link
 						className={classNames({
-							'text-teal-300': link.href === currentPath,
-							'hover:text-teal-300 transition-colors': true
+							'text-teal-500': link.href === currentPath,
+							'hover:text-teal-500 transition-colors': true
 						})}
 						key={link.lable}
 						href={link.href}
