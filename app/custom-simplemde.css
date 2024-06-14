@@ -1,0 +1,28 @@
+/* custom-simplemde.css */
+
+.CodeMirror {
+	background: #1e1e1e;
+	color: #d4d4d4;
+}
+
+.CodeMirror-cursor {
+	border-left: 1px solid #d4d4d4;
+}
+
+.CodeMirror-gutters {
+	background: #1e1e1e;
+	border-right: 1px solid #3a3a3a;
+}
+
+.CodeMirror-linenumber {
+	color: #858585;
+}
+
+.cm-s-easymde .CodeMirror-activeline-background {
+	background: #2a2a2a;
+}
+
+.cm-s-easymde .CodeMirror-matchingbracket {
+	color: #d4d4d4;
+	background: #555555;
+}
