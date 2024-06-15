@@ -1,7 +1,7 @@
 import { Box, Heading, Text } from '@radix-ui/themes';
 import LoadingSpinner from './components/LoadingSpinner';
 
-const loading = () => {
+const Loading = () => {
 	return (
 		<Box className='text-center mt-40 space-y-10'>
 			<Heading className='text-teal-500'>Loading...</Heading>
@@ -15,4 +15,4 @@ const loading = () => {
 	);
 };
 
-export default loading;
+export default Loading;
