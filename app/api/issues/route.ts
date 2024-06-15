@@ -5,15 +5,15 @@ import prisma from '@/prisma/db';
 interface Issue {}
 
 const createIssueSchema = z.object({
-	title: z.string().min(1).max(250),
-	description: z.string().min(1)
+	title: z.string().min(1, 'title is required').max(250),
+	description: z.string().min(1, 'description is reuired')
 });
 
 export async function POST(req: NextRequest) {
 	const body = await req.json();
 
 	const validation = createIssueSchema.safeParse(body);
-	if (!validation.success) return NextResponse.json(validation.error.errors, { status: 400 });
+	if (!validation.success) return NextResponse.json(validation.error.format(), { status: 400 });
 
 	const issue = await prisma.issue.create({
 		data: { title: body.title, description: body.description }
