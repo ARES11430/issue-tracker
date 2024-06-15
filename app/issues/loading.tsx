@@ -15,7 +15,6 @@ const LoadingIssuePage = () => {
 			<Table.Root variant='surface'>
 				<Table.Header>
 					<Table.Row>
-						<Table.ColumnHeaderCell>Id</Table.ColumnHeaderCell>
 						<Table.ColumnHeaderCell>Title</Table.ColumnHeaderCell>
 						<Table.ColumnHeaderCell className='hidden md:table-cell'>Status</Table.ColumnHeaderCell>
 						<Table.ColumnHeaderCell className='hidden md:table-cell'>
@@ -26,9 +25,6 @@ const LoadingIssuePage = () => {
 				<Table.Body>
 					{issues.map((issue) => (
 						<Table.Row key={issue}>
-							<Table.Cell>
-								<Skeleton />
-							</Table.Cell>
 							<Table.Cell>
 								<Skeleton />
 								<div className='block md:hidden'>
