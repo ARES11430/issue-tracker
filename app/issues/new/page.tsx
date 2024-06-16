@@ -1,7 +1,7 @@
 import IssueForm from '../_components/IssueForm';
 
 const NewIssuePage = () => {
-	return <IssueForm buttonText='Submit New Issue' />;
+	return <IssueForm />;
 };
 
 export default NewIssuePage;

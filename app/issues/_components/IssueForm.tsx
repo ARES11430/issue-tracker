@@ -12,7 +12,7 @@ import dynamic from 'next/dynamic';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { z } from 'zod';
-import { createIssueSchema } from '@/app/validation/validationSchemas';
+import { issueSchema } from '@/app/validation/validationSchemas';
 
 // * components
 import ErrorMessage from '@/app/components/ErrorMessage';
@@ -21,21 +21,20 @@ import { Issue } from '@prisma/client';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
-type IssueFormData = z.infer<typeof createIssueSchema>;
+type IssueFormData = z.infer<typeof issueSchema>;
 
 interface Props {
 	issue?: Issue;
-	buttonText: string;
 }
 
-const IssueForm = ({ issue, buttonText }: Props) => {
+const IssueForm = ({ issue }: Props) => {
 	const {
 		register,
 		control,
 		handleSubmit,
 		formState: { errors }
 	} = useForm<IssueFormData>({
-		resolver: zodResolver(createIssueSchema)
+		resolver: zodResolver(issueSchema)
 	});
 
 	const router = useRouter();
@@ -46,7 +45,8 @@ const IssueForm = ({ issue, buttonText }: Props) => {
 	const onSubmit = handleSubmit(async (data) => {
 		try {
 			setIsSubmitting(true);
-			await axios.post('/api/issues', data);
+			if (issue) await axios.patch('/api/issues/' + issue.id, data);
+			else await axios.post('/api/issues', data);
 			router.replace('/issues');
 		} catch (error) {
 			setError('An unexpected error has occured');
@@ -72,8 +72,7 @@ const IssueForm = ({ issue, buttonText }: Props) => {
 				/>
 				<ErrorMessage>{errors.description?.message}</ErrorMessage>
 				<Button disabled={isSubmitting}>
-					{buttonText}
-					{isSubmitting && <Spinner />}
+					{issue ? 'Edit Issue' : 'Submit new Issue'} {isSubmitting && <Spinner />}
 				</Button>
 			</form>
 		</div>
