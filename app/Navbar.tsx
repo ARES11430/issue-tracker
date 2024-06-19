@@ -6,6 +6,7 @@ import { AiFillBug } from 'react-icons/ai';
 import classNames from 'classnames';
 import { Avatar, Box, Container, DropdownMenu, Flex, Text } from '@radix-ui/themes';
 import { useSession, signIn, signOut } from 'next-auth/react';
+import Spinner from './components/Spinner';
 
 const Navbar = () => {
 	return (
@@ -63,7 +64,7 @@ const AuthStatus = () => {
 		signOut({ callbackUrl: '/' });
 	};
 
-	if (status === 'loading') return null;
+	if (status === 'loading') return <Spinner />;
 
 	if (status === 'unauthenticated')
 		return (
