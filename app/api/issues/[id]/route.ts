@@ -33,3 +33,22 @@ export async function PATCH(req: NextRequest, { params: { id } }: RouteParams) {
 
 	return NextResponse.json({ message: 'issue update successfully', updatedIssue }, { status: 200 });
 }
+
+export async function DELETE(request: NextRequest, { params: { id } }: RouteParams) {
+	// * Check if the id is a valid number
+	const parsedId = parseInt(id);
+	if (isNaN(parsedId)) {
+		notFound();
+	}
+	const issue = await prisma.issue.findUnique({
+		where: { id: parsedId }
+	});
+
+	if (!issue) return NextResponse.json({ error: 'Invalid issue' }, { status: 404 });
+
+	await prisma.issue.delete({
+		where: { id: issue.id }
+	});
+
+	return NextResponse.json({});
+}
