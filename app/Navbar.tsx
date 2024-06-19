@@ -4,17 +4,56 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AiFillBug } from 'react-icons/ai';
 import classNames from 'classnames';
-import { Box, Container, Flex } from '@radix-ui/themes';
+import { Avatar, Box, Container, DropdownMenu, Flex, Text } from '@radix-ui/themes';
 import { useSession, signIn, signOut } from 'next-auth/react';
 
 const Navbar = () => {
+	return (
+		<nav className='border-b mb-5 px-5 py-3'>
+			<Container>
+				<Flex justify='between'>
+					<Flex align='center' gap='3'>
+						<Link href='/'>
+							<AiFillBug />
+						</Link>
+						<NavLinks />
+					</Flex>
+					<AuthStatus />
+				</Flex>
+			</Container>
+		</nav>
+	);
+};
+
+const NavLinks = () => {
 	const currentPath = usePathname();
-	const { status, data: session } = useSession();
 
 	const links = [
-		{ lable: 'Dashboard', href: '/' },
-		{ lable: 'Issues', href: '/issues' }
+		{ label: 'Dashboard', href: '/' },
+		{ label: 'Issues', href: '/issues' }
 	];
+
+	return (
+		<ul className='flex space-x-6'>
+			{links.map((link) => (
+				<li key={link.href}>
+					<Link
+						className={classNames({
+							'nav-link': true,
+							'!text-teal-500': link.href === currentPath
+						})}
+						href={link.href}
+					>
+						{link.label}
+					</Link>
+				</li>
+			))}
+		</ul>
+	);
+};
+
+const AuthStatus = () => {
+	const { status, data: session } = useSession();
 
 	const handleSignIn = () => {
 		signIn(undefined, { callbackUrl: '/' });
@@ -24,48 +63,41 @@ const Navbar = () => {
 		signOut({ callbackUrl: '/' });
 	};
 
+	if (status === 'loading') return null;
+
+	if (status === 'unauthenticated')
+		return (
+			<button onClick={handleSignIn} className='ml-5'>
+				Login
+			</button>
+		);
+
 	return (
-		<nav className='border-b mb-5 px-5 py-3'>
-			<Container>
-				<Flex justify='between'>
-					<Flex gap='3' align='center'>
-						<Link href='/'>
-							<AiFillBug />
-						</Link>
-						<ul className='flex space-x-5'>
-							{links.map((link) => (
-								<li key={link.lable}>
-									<Link
-										className={classNames({
-											'text-teal-500': link.href === currentPath,
-											'hover:text-teal-500 transition-colors': true
-										})}
-										href={link.href}
-									>
-										{link.lable}
-									</Link>
-								</li>
-							))}
-						</ul>
-					</Flex>
-					<Box>
-						{status === 'authenticated' && (
-							<Box className='flex space-x-5'>
-								<span>{session.user!.name}</span>
-								<button onClick={handleSignOut} className='ml-5'>
-									Sign Out
-								</button>
-							</Box>
-						)}
-						{status === 'unauthenticated' && (
-							<button onClick={handleSignIn} className='ml-5'>
-								Login
-							</button>
-						)}
-					</Box>
-				</Flex>
-			</Container>
-		</nav>
+		<Box>
+			{session && <Text className='mr-3'>{session.user?.name}</Text>}
+			<DropdownMenu.Root>
+				<DropdownMenu.Trigger>
+					<Avatar
+						src={session!.user!.image!}
+						fallback='?'
+						size='2'
+						radius='full'
+						className='cursor-pointer'
+						referrerPolicy='no-referrer'
+					/>
+				</DropdownMenu.Trigger>
+				<DropdownMenu.Content>
+					<DropdownMenu.Label>
+						<Text size='2'>{session!.user!.email}</Text>
+					</DropdownMenu.Label>
+					<DropdownMenu.Item>
+						<button onClick={handleSignOut} className='ml-5'>
+							Sign Out
+						</button>
+					</DropdownMenu.Item>
+				</DropdownMenu.Content>
+			</DropdownMenu.Root>
+		</Box>
 	);
 };
 
