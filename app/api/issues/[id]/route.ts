@@ -1,5 +1,5 @@
 import { IssueBody } from '@/app/models/IssueModel';
-import { issueSchema } from '@/app/validation/validationSchemas';
+import { issueSchema, patchIssueSchema } from '@/app/validation/validationSchemas';
 import prisma from '@/prisma/db';
 import { notFound } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
@@ -16,13 +16,25 @@ export async function PATCH(req: NextRequest, { params: { id } }: RouteParams) {
 
 	const body = (await req.json()) as IssueBody;
 
-	const validation = issueSchema.safeParse(body);
-	if (!validation.success) return NextResponse.json(validation.error.format(), { status: 400 });
+	const validation = patchIssueSchema.safeParse(body);
+	if (!validation.success)
+		return NextResponse.json(validation.error.format(), {
+			status: 400
+		});
+
+	const { title, description, assignedToUserId } = body;
 
 	// * Check if the id is a valid number
 	const parsedId = parseInt(id);
 	if (isNaN(parsedId)) {
 		notFound();
+	}
+
+	if (assignedToUserId) {
+		const user = await prisma.user.findUnique({
+			where: { id: assignedToUserId }
+		});
+		if (!user) return NextResponse.json({ error: 'Invalid user.' }, { status: 400 });
 	}
 
 	const issue = await prisma.issue.findUnique({ where: { id: parsedId } });
@@ -31,8 +43,9 @@ export async function PATCH(req: NextRequest, { params: { id } }: RouteParams) {
 	const updatedIssue = await prisma.issue.update({
 		where: { id: issue.id },
 		data: {
-			title: body.title,
-			description: body.description
+			title,
+			description,
+			assignedToUserId
 		}
 	});
 
