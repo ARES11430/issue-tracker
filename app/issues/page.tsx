@@ -4,6 +4,7 @@ import { Status } from '@prisma/client';
 import IssueActions from './IssueActions';
 import IssueTable, { IssueQuery, columnNames } from './IssueTable';
 import { Flex } from '@radix-ui/themes';
+import { Metadata } from 'next';
 
 interface Props {
 	searchParams: IssueQuery;
@@ -36,6 +37,11 @@ const IssuesPage = async ({ searchParams }: Props) => {
 			<Pagination pageSize={pageSize} currentPage={page} itemCount={issueCount} />
 		</Flex>
 	);
+};
+
+export const metadata: Metadata = {
+	title: 'Issue Tracker - List',
+	description: 'View of all issues'
 };
 
 export default IssuesPage;
